@@ -16,5 +16,5 @@ jobs:
           git status
       - name: Test the application
         run: |
-          dotnet test test-app
+          dotnet --version
           

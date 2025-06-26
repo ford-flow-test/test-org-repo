@@ -1,7 +1,7 @@
 name: Validate code in the PR
 
 on:
-  pull_request:
+  [pull_request]
 
 jobs:
   validate-pr:
@@ -17,4 +17,5 @@ jobs:
       - name: Test the application
         run: |
           dotnet --version
+          sleep 300
           

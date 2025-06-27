@@ -5,6 +5,8 @@ on:
 
 jobs:
   validate-pr:
+    permissions:
+      checks: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

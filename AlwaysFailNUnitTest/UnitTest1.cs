@@ -11,6 +11,5 @@ public class Tests
     public void Test1()
     {
         Assert.Fail();
-        Console.WriteLine("test");
     }
 }

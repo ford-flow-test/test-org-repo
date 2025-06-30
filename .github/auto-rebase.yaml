@@ -2,7 +2,7 @@ name: Rebase Pull Requests
 
 on:
   repository_dispatch:
-    types: [pr-update]
+    types: [pr-rebase]
     
 jobs:
   check-and-rebase:

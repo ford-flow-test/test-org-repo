@@ -7,13 +7,31 @@ on:
 permissions:
   contents: write
 jobs:
-  send-dispatch:
+  process-prs:
     runs-on: ubuntu-latest
     steps:
-    - name: Trigger Repository Dispatch Event
-      run: |
-        curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          https://api.github.com/repos/ford-flow-test/test-org-repo/dispatches \
-          -d '{"event_type": "pr-rebase"}'
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and Rebase Labeled PRs
+        run: |
+          # Fetch all open PRs
+          prs=$(gh pr list --state open --json number --jq '.[].number')
+          echo "Found PR numbers: $prs"
+          
+          for pr in $prs; do
+            # Fetch labels for each PR
+            labels=$(gh pr view $pr --json labels --jq '.labels | map(.name)')
+          
+            # Check for the 'auto-rebase' label
+            if echo $labels | grep -q "auto-rebase"; then
+              echo "PR #$pr has 'auto-rebase' label. Rebasing..."
+              git checkout -b pr/$pr origin/pr/$pr
+              git rebase origin/main
+              git push --force-with-lease origin pr/$pr
+            else
+              echo "PR #$pr does not have 'auto-rebase' label. Skipping rebase..."
+            fi
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

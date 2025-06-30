@@ -22,13 +22,15 @@ jobs:
           for pr in $prs; do
             # Fetch labels for each PR
             labels=$(gh pr view $pr --json labels --jq '.labels | map(.name)')
-          
+            # Fetch branch name
+            head_branch=$(gh pr view $pr --json headRefName -q '.headRefName')
             # Check for the 'auto-rebase' label
             if echo $labels | grep -q "auto-rebase"; then
               echo "PR #$pr has 'auto-rebase' label. Rebasing..."
-              git checkout -b pr/$pr origin/pr/$pr
+              git fetch origin $head_branch
+              git checkout $head_branch
               git rebase origin/main
-              git push --force-with-lease origin pr/$pr
+              git push origin $head_branch --force-with-lease
             else
               echo "PR #$pr does not have 'auto-rebase' label. Skipping rebase..."
             fi

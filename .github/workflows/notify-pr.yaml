@@ -1,4 +1,4 @@
-name: Notify PR Updates
+name: Rebase PRs
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
 jobs:
-  process-prs:
+  rebase-prs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

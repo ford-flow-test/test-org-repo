@@ -1,0 +1,33 @@
+name: Rebase Pull Requests
+
+on:
+  repository_dispatch:
+    types: [pr-rebase]
+    
+jobs:
+  check-and-rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check for 'auto-rebase' label
+        run: |
+          # Get PR number from the context
+          PR_NUMBER=$(echo $GITHUB_REF | cut -d'/' -f3)
+          
+          # Fetch labels for this PR
+          labels=$(gh pr view $PR_NUMBER --json labels --jq '.labels | map(.name)')
+          
+          # Check if 'auto-rebase' label is present
+          if echo $labels | grep -q "auto-rebase"; then
+            echo "PR #$PR_NUMBER has 'auto-rebase' label. Performing rebase..."
+            git fetch origin main
+            git checkout pr/$PR_NUMBER
+            git rebase origin/main
+            git push --force-with-lease
+          else
+            echo "PR #$PR_NUMBER does not have 'auto-rebase' label. Skipping rebase..."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

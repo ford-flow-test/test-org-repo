@@ -34,12 +34,12 @@ jobs:
                 per_page: perPage,
                 page: page
               });
-              console.log(pr)
               pr = prs.data.find(pr =>
                 pr.auto_merge !== null &&
                 pr.labels.some(label => label.name === 'auto-rebase') &&
                 pr.rebaseable
               );
+              console.log(pr)
               if (prs.data.length < perPage) {
                 break;
               }

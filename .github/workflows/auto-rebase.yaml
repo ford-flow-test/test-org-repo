@@ -1,6 +1,8 @@
 name: Rebase Pull Requests
 
 on:
+  repository_dispatch:
+    types: [rebase-job]
   push:
     branches:
       - main
@@ -11,6 +13,17 @@ jobs:
   check-and-rebase:
     runs-on: ubuntu-latest
     steps:
+      - name: Call repository dispatch event
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/github-scripts@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'rebase-job',
+            });
+          
       - name: Checkout Code
         uses: actions/checkout@v4
         with:

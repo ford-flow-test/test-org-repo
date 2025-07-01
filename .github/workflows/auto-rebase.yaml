@@ -41,6 +41,7 @@ jobs:
                   repo: context.repo.repo,
                   pull_number: potentialPR.number
                 });
+                console.log(prDetails);
                 if (
                   prDetails.data.auto_merge !== null &&
                   prDetails.data.labels.some(label => label.name === 'auto-rebase') &&

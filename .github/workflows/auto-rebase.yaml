@@ -50,6 +50,7 @@ jobs:
                 repo: context.repo.repo,
                 pull_number: pr.number
               })
+              console.log(test);
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
             } else {

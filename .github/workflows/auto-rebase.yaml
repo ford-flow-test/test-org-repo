@@ -2,7 +2,7 @@ name: Rebase Pull Requests
 
 on:
   repository_dispatch:
-    types: [rebase-job]
+    types: [Trigger-rebase]
   push:
     branches:
       - main
@@ -20,7 +20,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/dispatches \
-            -d '{"event_type": "rebase-job"}'
+            -d '{"event_type": "Trigger-rebase"}'
           
       - name: Checkout Code
         if: ${{ github.event_name == 'repository_dispatch' }}

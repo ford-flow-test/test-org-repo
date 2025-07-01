@@ -57,7 +57,7 @@ jobs:
           git config --local user.name 'github-actions[bot]'
           
       - name: Rebase
-        if: '${{ steps.get-rebase-branch.outputs.BRANCH != '' }}'
+        if: ${{ steps.get-rebase-branch.outputs.BRANCH != '' }}
         run: |
           branch=${{ steps.get-rebase-branch.outputs.BRANCH }}
           git fetch origin $branch

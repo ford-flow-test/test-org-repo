@@ -1,39 +1,44 @@
-name: Notify PR Updates
+# name: Rebase PRs
 
-on:
-  push:
-    branches:
-      - main
-permissions:
-  contents: write
-jobs:
-  process-prs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Fetch and Rebase Labeled PRs
-        run: |
-          # Fetch all open PRs
-          prs=$(gh pr list --state open --json number --jq '.[].number')
-          echo "Found PR numbers: $prs"
+# on:
+#   push:
+#     branches:
+#       - main
+# permissions:
+#   contents: write
+# jobs:
+#   rebase-prs:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       - name: Set Git user details
+#         run: |
+#           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#           git config --local user.name "github-actions[bot]"
+#       - name: Fetch and Rebase Labeled PRs
+#         run: |
+#           # Fetch all open PRs
+#           prs=$(gh pr list --state open --json number --jq '.[].number')
+#           echo "Found PR numbers: $prs"
           
-          for pr in $prs; do
-            # Fetch labels for each PR
-            labels=$(gh pr view $pr --json labels --jq '.labels | map(.name)')
-            # Fetch branch name
-            head_branch=$(gh pr view $pr --json headRefName -q '.headRefName')
-            # Check for the 'auto-rebase' label
-            if echo $labels | grep -q "auto-rebase"; then
-              echo "PR #$pr has 'auto-rebase' label. Rebasing..."
-              git fetch origin $head_branch
-              git checkout $head_branch
-              git rebase origin/main
-              git push origin $head_branch --force-with-lease
-            else
-              echo "PR #$pr does not have 'auto-rebase' label. Skipping rebase..."
-            fi
-          done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           for pr in $prs; do
+#             # Fetch labels for each PR
+#             labels=$(gh pr view $pr --json labels --jq '.labels | map(.name)')
+#             # Fetch branch name
+#             head_branch=$(gh pr view $pr --json headRefName -q '.headRefName')
+#             # Check for the 'auto-rebase' label
+#             if echo $labels | grep -q "auto-rebase"; then
+#               echo "PR #$pr has 'auto-rebase' label. Rebasing..."
+#               git fetch origin $head_branch
+#               git checkout $head_branch
+#               git rebase origin/main
+#               git push origin $head_branch --force-with-lease
+#             else
+#               echo "PR #$pr does not have 'auto-rebase' label. Skipping rebase..."
+#             fi
+#           done
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

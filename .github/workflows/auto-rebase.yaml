@@ -42,7 +42,7 @@ jobs:
               page += 1;
             }
             if (pr) {
-              console.log(pr);
+              # console.log(pr);
               core.setOutput('BRANCH', pr.head.ref);
             } else {
               console.log("No PR to rebase");
@@ -57,10 +57,10 @@ jobs:
       - name: Rebase
         run: |
           branch=${{ steps.get-rebase-branch.outputs.BRANCH }}
-          # git fetch origin $branch
-          # git checkout $branch
-          # git rebase origin/main
-          # git push origin $branch --force-with-lease
+          git fetch origin $branch
+          git checkout $branch
+          git rebase origin/main
+          git push origin $branch --force-with-lease
 
 #      - name: Check for 'auto-rebase' label
 #        run: |

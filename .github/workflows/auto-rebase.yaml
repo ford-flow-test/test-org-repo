@@ -37,7 +37,7 @@ jobs:
               pr = prs.data.find(pr =>
                 pr.auto_merge !== null &&
                 pr.labels.some(label => label.name === 'auto-rebase') &&
-                pr.rebaseable === true
+                pr.rebaseable
               );
               if (prs.data.length < perPage) {
                 break;

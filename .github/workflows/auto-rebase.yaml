@@ -23,7 +23,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            console.log(prs);
+            console.log(prs.data[0].auto_merge);
           
 #      - name: Check for 'auto-rebase' label
 #        run: |

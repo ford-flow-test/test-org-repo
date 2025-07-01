@@ -23,9 +23,17 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               sort: 'created',
-              direction: 'desc'
+              direction: 'asc',
+              per_page: 100
             });
-            console.log(prs.data);
+            console.log(prs.data[0].labels);
+            const pr = prs.data.find(pr =>
+              pr.auto_merge !== null &&
+              pr.labels.some(label => label.name === 'auto-rebase')
+            );
+            console.log(pr);
+            
+            
           
 #      - name: Check for 'auto-rebase' label
 #        run: |

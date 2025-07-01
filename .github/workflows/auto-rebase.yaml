@@ -45,7 +45,11 @@ jobs:
             }
             if (pr) {
               console.log('PR to rebase: ' + pr.html_url);
-              console.log(pr);
+              const test = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number
+              })
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
             } else {

@@ -44,6 +44,8 @@ jobs:
               page += 1;
             }
             if (pr) {
+              console.log('PR to rebase: ' + pr.html_url);
+              core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
             } else {
               console.log('No PR to rebase');

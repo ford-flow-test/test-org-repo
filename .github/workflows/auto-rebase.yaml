@@ -42,7 +42,7 @@ jobs:
               page += 1;
             }
             if (pr) {
-              # console.log(pr);
+              // console.log(pr);
               core.setOutput('BRANCH', pr.head.ref);
             } else {
               console.log("No PR to rebase");

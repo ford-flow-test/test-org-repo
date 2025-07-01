@@ -34,11 +34,17 @@ jobs:
                 per_page: perPage,
                 page: page
               });
-              pr = prs.data.find(pr =>
-                pr.auto_merge !== null &&
-                pr.labels.some(label => label.name === 'auto-rebase') &&
-                pr.rebaseable
+              pr = prs.data.find(async (pr) =>
+                const prDetails = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number
+                });
+                return prDetails.data.auto_merge !== null &&
+                  prDetails.data.labels.some(label => label.name === 'auto-rebase') &&
+                  prDetails.data.rebaseable;
               );
+              
               console.log(pr)
               if (prs.data.length < perPage) {
                 break;

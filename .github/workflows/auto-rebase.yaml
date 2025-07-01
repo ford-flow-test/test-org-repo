@@ -14,8 +14,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: Get PR to rebase
-        id: get-rebase-pr
+      - name: Get branch to rebase
+        id: get-rebase-branch
         uses: actions/github-script@v7
         with:
           script: |
@@ -43,10 +43,25 @@ jobs:
             }
             if (pr) {
               console.log(pr);
+              core.setOutput('BRANCH', pr.head.ref);
             } else {
               console.log("No PR to rebase");
+              core.setOutput('BRANCH', '');
             }
+            
+      - name: Set Git user details
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           
+      - name: Rebase
+        run: |
+          branch=${{ steps.get-rebase-branch.outputs.BRANCH }}
+          # git fetch origin $branch
+          # git checkout $branch
+          # git rebase origin/main
+          # git push origin $branch --force-with-lease
+
 #      - name: Check for 'auto-rebase' label
 #        run: |
 #          # Get PR number from the context

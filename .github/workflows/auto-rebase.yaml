@@ -21,9 +21,11 @@ jobs:
           script: |
             const prs = await github.rest.pulls.list({
               owner: context.repo.owner,
-              repo: context.repo.repo
+              repo: context.repo.repo,
+              sort: 'created',
+              direction: 'desc'
             });
-            console.log(prs.data[0].auto_merge);
+            console.log(prs.data);
           
 #      - name: Check for 'auto-rebase' label
 #        run: |

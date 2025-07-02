@@ -21,6 +21,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const exec = require('child-process-promise').exec
             let pr = null;
             let page = 1;
             let perPage = 100;
@@ -41,17 +42,17 @@ jobs:
 
               for (const potentialPR of filteredPRs) {
                 try {
-                  await execPromise(`git fetch origin ${potentialPR.head.ref}:${potentialPR.head.ref}`);
-                  await execPromise(`git fetch origin ${potentialPR.base.ref}:${potentialPR.base.ref}`);
-                  await execPromise(`git checkout ${potentialPR.head.ref}`);
-                  await execPromise(`git rebase ${potentialPR.base.ref}`);
-                  await execPromise(`git checkout -`);    // Switch back to the default branch
+                  await exec(`git fetch origin ${potentialPR.head.ref}:${potentialPR.head.ref}`);
+                  await exec(`git fetch origin ${potentialPR.base.ref}:${potentialPR.base.ref}`);
+                  await exec(`git checkout ${potentialPR.head.ref}`);
+                  await exec(`git rebase ${potentialPR.base.ref}`);
+                  await exec(`git checkout -`);    // Switch back to the default branch
                   pr = potentialPR;
                   break;
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
-                  await execPromise(`git rebase --abort`); // Abort any rebase in progress
-                  await execPromise(`git checkout -`);    // Switch back to the default branch
+                  await exec(`git rebase --abort`); // Abort any rebase in progress
+                  await exec(`git checkout -`);    // Switch back to the default branch
                 }
               }
               

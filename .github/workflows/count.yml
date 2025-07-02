@@ -1,8 +1,7 @@
 name: count
 
 on:
-  pull_request:
-    types: [opened, synchronize, labeled, unlabeled, edited, ready_for_review, converted_to_draft]
+  push:
 jobs:
   check-file-changes:
     if: github.event.pull_request.draft == false

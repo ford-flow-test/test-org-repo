@@ -41,19 +41,18 @@ jobs:
               );
 
               for (const potentialPR of filteredPRs) {
-                const prDetails = await github.rest.pulls.get({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: potentialPR.number
-                });
-                console.log(prDetails);
-                if (
-                  prDetails.data.auto_merge !== null &&
-                  prDetails.data.labels.some(label => label.name === 'auto-rebase') &&
-                  prDetails.data.rebaseable
-                ) {
+                try {
+                  await execPromise(`git fetch origin ${potentialPR.head.ref}:${potentialPR.head.ref}`);
+                  await execPromise(`git fetch origin ${potentialPR.base.ref}:${potentialPR.base.ref}`);
+                  await execPromise(`git checkout ${potentialPR.head.ref}`);
+                  await execPromise(`git rebase ${potentialPR.base.ref}`);
+                  await execPromise(`git checkout -`);    // Switch back to the default branch
                   pr = potentialPR;
                   break;
+                } catch (error) {
+                  console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
+                  await execPromise(`git rebase --abort`); // Abort any rebase in progress
+                  await execPromise(`git checkout -`);    // Switch back to the default branch
                 }
               }
               

@@ -13,8 +13,8 @@ jobs:
     steps:          
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # We need full commit history for rebase
+        # with:
+        #   fetch-depth: 0 # We need full commit history for rebase
           
       - name: Set Git user details
         run: |

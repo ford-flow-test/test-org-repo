@@ -1,0 +1,27 @@
+name: Pull Request Enforcement
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled, unlabeled, edited, ready_for_review, converted_to_draft]
+jobs:
+  check-file-changes:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check file changes limit
+        run: |
+          FILE_COUNT=$(git diff origin/canary...HEAD --name-only | wc -l)
+          echo "File count: $FILE_COUNT"
+          
+          if [ "$FILE_COUNT" -gt 30 ]; then
+            echo "ERROR: This PR modifies $FILE_COUNT files, which exceeds the limit of 30 files."
+            exit 1
+          else
+            echo "SUCCESS: This PR modifies $FILE_COUNT files, which is within the limit."
+          fi

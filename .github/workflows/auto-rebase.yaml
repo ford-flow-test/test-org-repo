@@ -21,7 +21,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            await new Promise(r => setTimeout(r, 60000)); // If using GitHub API to check rebaseable branch, need to wait until field is updated
             let pr = null;
             let page = 1;
             let perPage = 100;

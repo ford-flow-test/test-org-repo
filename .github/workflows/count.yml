@@ -1,4 +1,4 @@
-name: Pull Request Enforcement
+name: count
 
 on:
   pull_request:

@@ -48,8 +48,12 @@ jobs:
                 per_page: perPage,
                 page: page
               });
-              
-              for (const potentialPR of prs.data) {
+              const filteredPRs = prs.data.filter(potentialPR =>
+                potentialPR.auto_merge !== null &&
+                potentialPR.labels.some(label => label.name === 'auto-rebase')
+              );
+
+              for (const potentialPR of filteredPRs) {
                 const prDetails = await github.rest.pulls.get({
                   owner: context.repo.owner,
                   repo: context.repo.repo,

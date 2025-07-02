@@ -15,7 +15,7 @@ jobs:
 
       - name: Check file changes limit
         run: |
-          FILE_COUNT=$(git diff origin/canary...HEAD --name-only | wc -l)
+          FILE_COUNT=$(git diff origin/main...HEAD --name-only | wc -l)
           echo "File count: $FILE_COUNT"
           
           if [ "$FILE_COUNT" -gt 30 ]; then

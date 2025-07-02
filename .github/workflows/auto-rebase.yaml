@@ -47,15 +47,17 @@ jobs:
               for (const potentialPR of filteredPRs) {
                 try { // Try rebase, if conflict then try next branch
                   console.log(`Checking ${potentialPR.url}`);
+                  await exec.exec(`git fetch origin ${potentialPR.head.ref}`);
+                  await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);
                   await exec.exec(`git rebase ${potentialPR.base.ref}`);
-                  await exec.exec(`git checkout -`);    // Switch back to the default branch
+                  await exec.exec(`git checkout -`);
                   pr = potentialPR;
                   break;
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
-                  await exec.exec(`git rebase --abort`); // Abort any rebase in progress
-                  await exec.exec(`git checkout -`);    // Switch back to the default branch
+                  await exec.exec(`git rebase --abort`);
+                  await exec.exec(`git checkout -`);
                 }
               }
               
@@ -77,7 +79,5 @@ jobs:
         if: ${{ steps.get-rebase-branch.outputs.BRANCH != '' }}
         run: |
           branch=${{ steps.get-rebase-branch.outputs.BRANCH }}
-          git fetch origin $branch
           git checkout $branch
-          git rebase origin/main
           git push origin $branch --force-with-lease

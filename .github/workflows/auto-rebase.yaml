@@ -41,8 +41,6 @@ jobs:
 
               for (const potentialPR of filteredPRs) {
                 try {
-                  await exec.exec(`git fetch origin ${potentialPR.head.ref}:${potentialPR.head.ref}`);
-                  await exec.exec(`git fetch origin ${potentialPR.base.ref}:${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);
                   await exec.exec(`git rebase ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout -`);    // Switch back to the default branch

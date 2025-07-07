@@ -39,6 +39,7 @@ jobs:
                 per_page: perPage,
                 page: page
               });
+              console.log(prs);
               const filteredPRs = prs.data.filter(potentialPR =>
                 potentialPR.auto_merge !== null &&
                 potentialPR.labels.some(label => label.name === 'auto-rebase')

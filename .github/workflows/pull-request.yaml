@@ -19,7 +19,7 @@ jobs:
       - name: Test the application
         run: |
           dotnet --version
-          sleep 1
+          sleep 30
 #      - name: Fail
 #        uses: actions/github-script@v7
 #        with:

@@ -1,7 +1,7 @@
 name: Validate code in the PR
 
 on:
-  [pull_request]
+  push:
 
 jobs:
   validate-pr:

@@ -75,7 +75,7 @@ jobs:
             if (pr) {
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
-              core.setOutput('SUCCESS_PRS', pr.number);
+              core.setOutput('SUCCESS_PR', pr.number);
               core.setOutput('FAIL_PRS', fail_prs);
             } else {
               console.log('No PR to rebase');

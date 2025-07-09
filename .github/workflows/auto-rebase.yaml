@@ -106,7 +106,7 @@ jobs:
               await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: previousComment.id
+                comment_id: previousComment.id
               });
             }
             

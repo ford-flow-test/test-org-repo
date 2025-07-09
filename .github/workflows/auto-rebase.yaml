@@ -100,7 +100,7 @@ jobs:
             const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}';
             const failBody = `❌ **Auto Rebase Failed**`
             const successBody = `✅ **Auto Rebase Successed**`
-            console.log('Posting comment on failed PRs...);
+            console.log('Posting comment on failed PRs...');
             failPrs.forEach((pr) => {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -109,11 +109,11 @@ jobs:
                 body: failBody
               });
             });
-            console.log('Posting comment on successed PR...);
+            console.log('Posting comment on successed PR...');
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr,
-              body: failBody
+              body: successBody
             });            
       

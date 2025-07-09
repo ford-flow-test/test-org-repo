@@ -51,7 +51,7 @@ jobs:
                   const user = await github.rest.users.getByUsername({
                     username: potentialPR.user.login
                   });
-                  console.log(user);
+                  console.log(potentialPR.number);
                   await exec.exec(`git fetch origin ${potentialPR.head.ref}`);
                   await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);

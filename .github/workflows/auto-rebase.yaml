@@ -29,7 +29,7 @@ jobs:
             let pr = null;
             let page = 1;
             let perPage = 100;
-            let fail_user = [];
+            let fail_prs = [];
             while (!pr) { // Loop until find PR to rebase, or no more PRs to check
               const prs = await github.rest.pulls.list({
                 owner: context.repo.owner,
@@ -63,7 +63,7 @@ jobs:
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
                   await exec.exec(`git rebase --abort`);
                   await exec.exec(`git checkout main`);
-                  fail_user.push(potentialPR.user.login);
+                  fail_prs.push(potentialPR.number);
                 }
               }
               
@@ -75,14 +75,14 @@ jobs:
             if (pr) {
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
-              core.setOutput('SUCCESS_USER', pr.user.login);
-              core.setOutput('FAIL_USER', fail_user);
+              core.setOutput('SUCCESS_PRS', pr.number);
+              core.setOutput('FAIL_PRS', fail_prs);
             } else {
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')
               core.setOutput('BRANCH', '');
-              core.setOutput('SUCCESS_USER', '');
-              core.setOutput('FAIL_USER', fail_user);
+              core.setOutput('SUCCESS_PRS', '');
+              core.setOutput('FAIL_PRS', fail_prs);
             }
       
       - name: Rebase
@@ -93,7 +93,10 @@ jobs:
           git push origin $branch --force-with-lease
 
       - name: Post Comment
-        run: |
-          echo ${{ steps.get-rebase-branch.outputs.FAIL_USER }}
-          echo ${{ steps.get-rebase-branch.outputs.SUCCESS_USER }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log(${{ steps.get-rebase-branch.outputs.FAIL_USER }});
+            console.log(${{ steps.get-rebase-branch.outputs.SUCCESS_USER }});
+            
       

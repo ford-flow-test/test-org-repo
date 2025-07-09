@@ -48,11 +48,6 @@ jobs:
               for (const potentialPR of filteredPRs) {
                 try { // Try rebase, if conflict then try next branch
                   console.log(`Checking ${potentialPR.url}`);
-                  console.log(potentialPR.user);
-                  const user = await github.rest.users.getByUsername({
-                    username: potentialPR.user.login
-                  });
-                  console.log(potentialPR.number);
                   await exec.exec(`git fetch origin ${potentialPR.head.ref}`);
                   await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);

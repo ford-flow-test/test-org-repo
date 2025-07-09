@@ -6,6 +6,7 @@ on:
       - main
 permissions:
   contents: write
+  pull-requests: write
     
 jobs:
   check-and-rebase:
@@ -95,10 +96,9 @@ jobs:
       - name: Post Comment
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const failPrs = JSON.parse('${{ steps.get-rebase-branch.outputs.FAIL_PRS }}');
-            const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}';
+            const failPrs = JSON.parse('${{ steps.get-rebase-branch.outputs.FAIL_PRS }}'); // Array of fail PR numbers
+            const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}'; // Success PR number
             const failBody = `❌ **Auto Rebase Failed**`
             const successBody = `✅ **Auto Rebase Successed**`
             
@@ -116,7 +116,7 @@ jobs:
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: pr,
+              issue_number: successPr,
               body: successBody
             });            
       

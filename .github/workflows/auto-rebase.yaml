@@ -46,7 +46,6 @@ jobs:
                 potentialPR.auto_merge !== null &&
                 potentialPR.labels.some(label => label.name === 'auto-rebase')
               );
-              console.log(filteredPRs.user.login);
               for (const potentialPR of filteredPRs) {
                 try { // Try rebase, if conflict then try next branch
                   console.log(`Checking ${potentialPR.url}`);

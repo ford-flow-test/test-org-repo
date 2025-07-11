@@ -104,10 +104,19 @@ jobs:
 
       - name: Post Comment
         uses: actions/github-script@v7
+        env:
+          FAIL_PRS: ${{ steps.get-rebase-branch.outputs.FAIL_PRS }}
+          SUCCESS_PR: ${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}
+          FAIL_EMAILS: ${{ steps.get-rebase-branch.outputs.FAIL_EMAILS }}
+          SUCCESS_EMAIL: ${{ steps.get-rebase-branch.outputs.SUCCESS_EMAIL }}
         with:
           script: |
-            console.log('${{ steps.get-rebase-branch.outputs.FAIL_EMAILS }}');
-            console.log('${{ steps.get-rebase-branch.outputs.SUCCESS_EMAIL }}');
+            const failEmails = process.env.FAIL_EMAILS || '';
+            const successEmail = process.env.SUCCESS_EMAIL || '';
+            
+            console.log(failEmails);
+            console.log(successEmail);
+
 
             const failPrs = JSON.parse('${{ steps.get-rebase-branch.outputs.FAIL_PRS }}'); // Array of fail PR numbers
             const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}'; // Success PR number

@@ -49,7 +49,7 @@ jobs:
               for (const potentialPR of filteredPRs) {
                 try { // Try rebase, if conflict then try next branch
                   console.log(`Checking ${potentialPR.url}`);
-                  const email = await github.rest.users.getByUserName({
+                  const email = await github.rest.users.getByUsername({
                     username: potentialPR.user.login
                   });
                   console.log(email);

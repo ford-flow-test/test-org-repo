@@ -31,6 +31,7 @@ jobs:
             let page = 1;
             let perPage = 100;
             let fail_prs = [];
+            let success_email = null;
             let fail_emails = ''; // Should be comma separated with no space
             while (!pr) { // Loop until find PR to rebase, or no more PRs to check
               const prs = await github.rest.pulls.list({
@@ -45,23 +46,32 @@ jobs:
                 potentialPR.auto_merge !== null &&
                 potentialPR.labels.some(label => label.name === 'auto-rebase')
               );
-
+              console.log(filteredPRs.user.login);
               for (const potentialPR of filteredPRs) {
                 try { // Try rebase, if conflict then try next branch
                   console.log(`Checking ${potentialPR.url}`);
-                  console.log(potentialPR.user);
+                  const email = await.github.rest.users.getByUserName({
+                    username: potentialPR.user.login
+                  }).email;
                   await exec.exec(`git fetch origin ${potentialPR.head.ref}`);
                   await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);
                   await exec.exec(`git rebase ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout main`);
                   pr = potentialPR;
+                  if (email != null) {
+                    success_email = email;
+                  }
                   break;
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
                   await exec.exec(`git rebase --abort`);
                   await exec.exec(`git checkout main`);
                   fail_prs.push(potentialPR.number);
+                  if (email != null) {
+                    fail_emails = fail_emails.concat(email,',');
+                  }
+                  console.log(email);
                 }
               }
               
@@ -75,12 +85,15 @@ jobs:
               core.setOutput('BRANCH', pr.head.ref);
               core.setOutput('SUCCESS_PR', pr.number);
               core.setOutput('FAIL_PRS', fail_prs);
+              core.setOutput('SUCCESS_EMAIL', success_email);
+              core.setOutput('FAIL_EMAILS, fail_emails);
             } else {
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')
               core.setOutput('BRANCH', '');
               core.setOutput('SUCCESS_PR', '');
               core.setOutput('FAIL_PRS', fail_prs);
+              core.setOutput('FAIL_EMAILS', fail_emails);
             }
       
       - name: Rebase
@@ -94,6 +107,9 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            console.log('${{ steps.get-rebase-branch.outputs.FAIL_EMAILS }}');
+            console.log('${{ steps.get-rebase-branch.outputs.SUCCESS_EMAIL }}');
+
             const failPrs = JSON.parse('${{ steps.get-rebase-branch.outputs.FAIL_PRS }}'); // Array of fail PR numbers
             const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}'; // Success PR number
             const failBody = `❌ **Auto Rebase Failed**`

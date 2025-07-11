@@ -120,11 +120,13 @@ jobs:
                 issue_number: prNumber
               });
               const previousComment = comments.data.find(comment => comment.body.includes("Auto Rebase") && comment.user.type === 'Bot');
-              await github.rest.issues.deleteComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: previousComment.id
-              });
+              if (previousComment != null) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: previousComment.id
+                });
+              }
             }
             
             console.log('Posting comment on failed PRs...');

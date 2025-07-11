@@ -47,9 +47,11 @@ jobs:
                 potentialPR.labels.some(label => label.name === 'auto-rebase')
               );
               for (const potentialPR of filteredPRs) {
-                const email = await github.rest.users.getByUsername({
+                const user = await github.rest.users.getByUsername({
                   username: potentialPR.user.login
-                }).data.email;
+                });
+                const email = user.data.email;
+                console.log(email);
                 try { // Try rebase, if conflict then try next branch
                   console.log(`Checking ${potentialPR.url}`);
                   await exec.exec(`git fetch origin ${potentialPR.head.ref}`);

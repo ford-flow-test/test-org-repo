@@ -87,7 +87,7 @@ jobs:
               core.setOutput('SUCCESS_PR', pr.number);
               core.setOutput('FAIL_PRS', fail_prs);
               core.setOutput('SUCCESS_EMAIL', success_email);
-              core.setOutput('FAIL_EMAILS, fail_emails);
+              core.setOutput('FAIL_EMAILS', fail_emails);
             } else {
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')

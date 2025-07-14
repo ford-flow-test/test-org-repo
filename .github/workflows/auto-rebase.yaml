@@ -97,14 +97,14 @@ jobs:
               core.setOutput('BRANCH', pr.head.ref);
               core.setOutput('SUCCESS_PR', pr.number);
               core.setOutput('FAIL_PRS', fail_prs);
-              core.setOutput('PR_LIST', prList);
+              core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             } else {
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')
               core.setOutput('BRANCH', '');
               core.setOutput('SUCCESS_PR', '');
               core.setOutput('FAIL_PRS', fail_prs);
-              core.setOutput('PR_LIST', prList);
+              core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             }
       
       - name: Rebase
@@ -164,6 +164,4 @@ jobs:
               issue_number: successPr,
               body: successBody
             });            
-      # - name: Send emails
-      #   uses: dawidd6/action-send-mail@v6
-      #   with:
+

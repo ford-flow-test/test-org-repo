@@ -51,9 +51,9 @@ jobs:
               for (const potentialPR of filteredPRs) {
                 let email = null;
                 try {
-                  const { data: user } = await github.rest.users.getByUsername({ username: pr.user.login });
-                  console.log(data);
-                  //email = user.email || 'no-email@example.com'; // Provide a placeholder if no email is available
+                  const { data: user } = await github.rest.users.getByUsername({ username: potentialPR.user.login });
+                  console.log(user);
+                  email = user.email || 'no-email@example.com'; // Provide a placeholder if no email is available
                 } catch (error) {
                   console.error(`Failed to retrieve email for user ${pr.user.login}:`, error);
                 }
@@ -125,7 +125,7 @@ jobs:
           PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         with:
           script: |
-            echo $PR_LIST
+            console.log(process.env.PR_LIST);
             const failEmails = process.env.FAIL_EMAILS || '';
             const successEmail = process.env.SUCCESS_EMAIL || '';
             

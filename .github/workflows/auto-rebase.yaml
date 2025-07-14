@@ -68,7 +68,7 @@ jobs:
                   }
                   status = true;
                   prList.push({
-                    pr: potentialPR.number,
+                    num: potentialPR.number,
                     status: status,
                     email: email
                   });

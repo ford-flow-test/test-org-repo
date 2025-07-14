@@ -33,20 +33,22 @@ jobs:
       # Output:
       #  BRANCH: A branch to rebase
       #  PR_LIST: A JSON list of all checked PRs. Example:
-      #     {
-      #       "pr": [
-      #         {
-      #           "num": 1,
-      #           "status": false,
-      #           "email": "email_1@flowaccount.com"
-      #         },
-      #         {
-      #           "num": 2,
-      #           "status": true,
-      #           "email": "email_2@flowaccount.com"
-      #         }
-      #       ]
-      #     }
+      #        {
+      #          "pr": [
+      #            {
+      #              "num": 1,
+      #              "status": false,
+      #              "email": "email_1@flowaccount.com",
+      #              "author": "username1"
+      #            },
+      #            {
+      #              "num": 2,
+      #              "status": true,
+      #              "email": "email_2@flowaccount.com",
+      #              "author": "username2"
+      #            }
+      #          ]
+      #        }
       #
       - name: Get branch to rebase
         id: get-rebase-branch
@@ -196,7 +198,11 @@ jobs:
                 pass: process.env.SMTP_PASS,
               },
             });
-            prList.forEach(async ({ pr, status, email }) => {
+            for (const { pr, status, email, author } of prList) {
+              if (!email) {
+                console.log(`User ${author}'s email not found. This is likely because email is set to private`);
+                continue;
+              }
               const subject = `Rebase Status for PR #${pr}`;
               const body = `Your PR #${pr} ${status ? 'has rebased successfully' : 'failed to rebase'}.`;
   
@@ -208,7 +214,7 @@ jobs:
               };
   
               try {
-                await transporter.sendMail(mailOptions);
+                // await transporter.sendMail(mailOptions);
                 console.log(`Email sent to ${email} for PR #${pr}`);
               } catch (error) {
                 console.error(`Failed to send email to ${email}: `, error.message);

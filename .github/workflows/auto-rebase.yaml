@@ -80,7 +80,7 @@ jobs:
                   fail_prs.push(potentialPR.number);
 
                   prList.push({
-                    pr: potentialPR.number,
+                    num: potentialPR.number,
                     status: status,
                     email: email
                   });

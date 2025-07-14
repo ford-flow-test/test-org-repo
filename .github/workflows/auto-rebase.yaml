@@ -211,7 +211,7 @@ jobs:
                 await transporter.sendMail(mailOptions);
                 console.log(`Email sent to ${email} for PR #${pr}`);
               } catch (error) {
-                console.error(`Failed to send email to \${email}: `, error.message);
+                console.error(`Failed to send email to ${email}: `, error.message);
               }
             });
 

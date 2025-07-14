@@ -32,7 +32,7 @@ jobs:
 
       # Output:
       #  BRANCH: A branch to rebase
-      #  PR_LIST: A JSON list of all checked PRs
+      #  PR_LIST: A JSON list of all checked PRs. Example:
       #     {
       #       "pr": [
       #         {
@@ -47,6 +47,7 @@ jobs:
       #         }
       #       ]
       #     }
+      #
       - name: Get branch to rebase
         id: get-rebase-branch
         uses: actions/github-script@v7
@@ -177,7 +178,6 @@ jobs:
         uses: actions/github-script@v7
         env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
@@ -188,12 +188,12 @@ jobs:
             console.log(prList);
 
             const transporter = nodemailer.createTransport({
-              host: 'mail.smtp2go.com',
+              host: process.env.SMTP_HOST,
               port: 2525,
               secure: false, // true for 465, false for other ports
               auth: {
-                user: 'flowaccount',
-                pass: 'aHqpUqvw2ocWy2OJ',
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
               },
             });
             prList.forEach(async ({ pr, status, email }) => {

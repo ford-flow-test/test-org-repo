@@ -69,7 +69,7 @@ jobs:
                   }
                   status = true;
                   prList.push({
-                    num: potentialPR.number,
+                    pr: potentialPR.number,
                     status: status,
                     email: email
                   });
@@ -81,7 +81,7 @@ jobs:
                   fail_prs.push(potentialPR.number);
 
                   prList.push({
-                    num: potentialPR.number,
+                    pr: potentialPR.number,
                     status: status,
                     email: email
                   });

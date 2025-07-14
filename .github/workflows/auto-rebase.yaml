@@ -31,22 +31,22 @@ jobs:
           git config --local user.name 'github-actions[bot]'
 
       # Output:
-      #  BRANCH: branch to rebase
-      #  PR_LIST:
-      # {
-      #   "pr": [
+      #  BRANCH: A branch to rebase
+      #  PR_LIST: A JSON list of all checked PRs
       #     {
-      #       "num": 21,
-      #       "status": false,
-      #       "email": "patsakorn_b@flowaccount.com"
-      #     },
-      #     {
-      #       "num": 22,
-      #       "status": false,
-      #       "email": "patsakorn_b@flowaccount.com"
+      #       "pr": [
+      #         {
+      #           "num": 1,
+      #           "status": false,
+      #           "email": "email_1@flowaccount.com"
+      #         },
+      #         {
+      #           "num": 2,
+      #           "status": true,
+      #           "email": "email_2@flowaccount.com"
+      #         }
+      #       ]
       #     }
-      #   ]
-      # }
       - name: Get branch to rebase
         id: get-rebase-branch
         uses: actions/github-script@v7
@@ -186,5 +186,15 @@ jobs:
             const nodemailer = require('nodemailer');
             const prList = JSON.parse(process.env.PR_LIST).pr;
             console.log(prList);
-      
+
+            const transporter = nodemailer.createTransport({
+              host: 'mail.smtp2go.com',
+              port: 2525,
+              secure: false, // true for 465, false for other ports
+              auth: {
+                user: 'flowaccount',
+                pass: 'aHqpUqvw2ocWy2OJ',
+              },
+            });
+
 

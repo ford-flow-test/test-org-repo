@@ -81,7 +81,7 @@ jobs:
                   }
                 }
                 prList.push({
-                  pr: pr.number,
+                  pr: potentialPR.number,
                   status: status,
                   email: email
                 });

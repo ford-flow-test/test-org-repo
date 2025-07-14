@@ -85,6 +85,7 @@ jobs:
                   status: status,
                   email: email
                 });
+                console.log(prList);
               }
 
               if (prs.data.length < perPage) {
@@ -126,6 +127,7 @@ jobs:
           PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         with:
           script: |
+            console.log("prlist:");
             console.log(process.env.PR_LIST);
             const failEmails = process.env.FAIL_EMAILS || '';
             const successEmail = process.env.SUCCESS_EMAIL || '';

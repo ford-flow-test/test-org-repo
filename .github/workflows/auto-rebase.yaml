@@ -196,5 +196,23 @@ jobs:
                 pass: 'aHqpUqvw2ocWy2OJ',
               },
             });
+            prList.forEach(async ({ pr, status, email }) => {
+              const subject = `Rebase Status for PR #${pr}`;
+              const body = `Your PR #${pr} ${status ? 'has rebased successfully' : 'failed to rebase'}.`;
+  
+              const mailOptions = {
+                from: 'Rebase Bot',
+                to: email,
+                subject: subject,
+                text: body,
+              };
+  
+              try {
+                await transporter.sendMail(mailOptions);
+                console.log(`Email sent to ${email} for PR #${pr}`);
+              } catch (error) {
+                console.error(`Failed to send email to \${email}: `, error.message);
+              }
+            });
 
 

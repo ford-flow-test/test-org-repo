@@ -80,12 +80,13 @@ jobs:
                     fail_emails = fail_emails.concat(email,',');
                   }
                 }
+                prList.push({
+                  pr: pr.number,
+                  status: status,
+                  email: email
+                });
               }
-              prList.push({
-                pr: pr.number,
-                status: status,
-                email: email
-              });
+
               if (prs.data.length < perPage) {
                 break;
               }

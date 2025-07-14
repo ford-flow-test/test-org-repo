@@ -32,7 +32,6 @@ jobs:
             let page = 1;
             let perPage = 100;
             let prList = [];
-            let fail_prs = [];
             
             while (!pr) { // Loop until find PR to rebase, or no more PRs to check
               const prs = await github.rest.pulls.list({
@@ -71,19 +70,20 @@ jobs:
                   prList.push({
                     pr: potentialPR.number,
                     status: status,
-                    email: email
+                    email: email,
+                    author: potentialPR.user.login
                   });
                   break;
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
                   await exec.exec(`git rebase --abort`);
                   await exec.exec(`git checkout main`);
-                  fail_prs.push(potentialPR.number);
 
                   prList.push({
                     pr: potentialPR.number,
                     status: status,
-                    email: email
+                    email: email,
+                    author: potentialPR.user.login
                   });
                 }
               }
@@ -96,15 +96,11 @@ jobs:
             if (pr) {
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
-              core.setOutput('SUCCESS_PR', pr.number);
-              core.setOutput('FAIL_PRS', fail_prs);
               core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             } else {
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')
               core.setOutput('BRANCH', '');
-              core.setOutput('SUCCESS_PR', '');
-              core.setOutput('FAIL_PRS', fail_prs);
               core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             }
       
@@ -118,17 +114,12 @@ jobs:
       - name: Post Comment
         uses: actions/github-script@v7
         env:
-          FAIL_PRS: ${{ steps.get-rebase-branch.outputs.FAIL_PRS }}
-          SUCCESS_PR: ${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}
           PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         with:
           script: |
             const prList = JSON.parse(process.env.PR_LIST).pr;
-            console.log("prlist:");
             console.log(prList);
 
-            const failPrs = JSON.parse('${{ steps.get-rebase-branch.outputs.FAIL_PRS }}'); // Array of fail PR numbers
-            const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}'; // Success PR number
             const failBody = `❌ **Auto Rebase Failed**`
             const successBody = `✅ **Auto Rebase Successed**`
             async function deletePreviousComment(prNumber) {

@@ -120,8 +120,6 @@ jobs:
             const prList = JSON.parse(process.env.PR_LIST).pr;
             console.log(prList);
 
-            const failBody = `❌ **Auto Rebase Failed**`
-            const successBody = `✅ **Auto Rebase Successed**`
             async function deletePreviousComment(prNumber) {
               const comments = await github.rest.issues.listComments({
                 owner: context.repo.owner,
@@ -138,11 +136,11 @@ jobs:
               }
             }
             
-            for (const { pr, status } of prList) {
+            for (const { pr, status, author } of prList) {
               await deletePreviousComment(pr);
               const body = status
-                ? `✅ **Auto Rebase Succeeded**`
-                : `❌ **Auto Rebase Failed**`;
+                ? `✅ **Auto Rebase Succeeded**\n@${author}`
+                : `❌ **Auto Rebase Failed**\n@${author}`;
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,

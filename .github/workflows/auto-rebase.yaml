@@ -70,6 +70,11 @@ jobs:
                     success_email = email;
                   }
                   status = true;
+                  prList.push({
+                    pr: potentialPR.number,
+                    status: status,
+                    email: email
+                  });
                   break;
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
@@ -79,12 +84,12 @@ jobs:
                   if (email != null) {
                     fail_emails = fail_emails.concat(email,',');
                   }
+                  prList.push({
+                    pr: potentialPR.number,
+                    status: status,
+                    email: email
+                  });
                 }
-                prList.push({
-                  pr: potentialPR.number,
-                  status: status,
-                  email: email
-                });
                 console.log(prList);
               }
 
@@ -100,6 +105,7 @@ jobs:
               core.setOutput('FAIL_PRS', fail_prs);
               core.setOutput('SUCCESS_EMAIL', success_email);
               core.setOutput('FAIL_EMAILS', fail_emails);
+              core.setOutput('PR_LIST', prList);
             } else {
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')

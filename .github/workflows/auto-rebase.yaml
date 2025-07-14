@@ -201,7 +201,7 @@ jobs:
               const body = `Your PR #${pr} ${status ? 'has rebased successfully' : 'failed to rebase'}.`;
   
               const mailOptions = {
-                from: 'Rebase Bot',
+                from: '"Rebase bot" <patsakorn_b+smtp@flowaccount.com>',
                 to: email,
                 subject: subject,
                 text: body,

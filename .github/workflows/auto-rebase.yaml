@@ -32,8 +32,6 @@ jobs:
             let perPage = 100;
             let prList = [];
             let fail_prs = [];
-            let success_email = null;
-            let fail_emails = ''; // Should be comma separated with no space
             
             while (!pr) { // Loop until find PR to rebase, or no more PRs to check
               const prs = await github.rest.pulls.list({
@@ -52,8 +50,7 @@ jobs:
                 let email = null;
                 try {
                   const { data: user } = await github.rest.users.getByUsername({ username: potentialPR.user.login });
-                  console.log(user);
-                  email = user.email || 'no-email@example.com'; // Provide a placeholder if no email is available
+                  email = user.email;
                 } catch (error) {
                   console.error(`Failed to retrieve email for user ${pr.user.login}:`, error);
                 }
@@ -81,16 +78,13 @@ jobs:
                   await exec.exec(`git rebase --abort`);
                   await exec.exec(`git checkout main`);
                   fail_prs.push(potentialPR.number);
-                  if (email != null) {
-                    fail_emails = fail_emails.concat(email,',');
-                  }
+
                   prList.push({
                     pr: potentialPR.number,
                     status: status,
                     email: email
                   });
                 }
-                console.log(prList);
               }
 
               if (prs.data.length < perPage) {
@@ -103,8 +97,6 @@ jobs:
               core.setOutput('BRANCH', pr.head.ref);
               core.setOutput('SUCCESS_PR', pr.number);
               core.setOutput('FAIL_PRS', fail_prs);
-              core.setOutput('SUCCESS_EMAIL', success_email);
-              core.setOutput('FAIL_EMAILS', fail_emails);
               core.setOutput('PR_LIST', prList);
             } else {
               console.log('No PR to rebase');
@@ -112,7 +104,6 @@ jobs:
               core.setOutput('BRANCH', '');
               core.setOutput('SUCCESS_PR', '');
               core.setOutput('FAIL_PRS', fail_prs);
-              core.setOutput('FAIL_EMAILS', fail_emails);
               core.setOutput('PR_LIST', prList);
             }
       
@@ -128,19 +119,11 @@ jobs:
         env:
           FAIL_PRS: ${{ steps.get-rebase-branch.outputs.FAIL_PRS }}
           SUCCESS_PR: ${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}
-          FAIL_EMAILS: ${{ steps.get-rebase-branch.outputs.FAIL_EMAILS }}
-          SUCCESS_EMAIL: ${{ steps.get-rebase-branch.outputs.SUCCESS_EMAIL }}
           PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         with:
           script: |
             console.log("prlist:");
             console.log(process.env.PR_LIST);
-            const failEmails = process.env.FAIL_EMAILS || '';
-            const successEmail = process.env.SUCCESS_EMAIL || '';
-            
-            console.log(failEmails);
-            console.log(successEmail);
-
 
             const failPrs = JSON.parse('${{ steps.get-rebase-branch.outputs.FAIL_PRS }}'); // Array of fail PR numbers
             const successPr = '${{ steps.get-rebase-branch.outputs.SUCCESS_PR }}'; // Success PR number

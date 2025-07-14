@@ -200,7 +200,7 @@ jobs:
             });
             for (const { pr, status, email, author } of prList) {
               if (!email) {
-                console.log(`User ${author}'s email not found. This is likely because email is set to private`);
+                console.log(`User ${author}'s email was not found. This is likely because email is set to private`);
                 continue;
               }
               const subject = `Rebase Status for PR #${pr}`;

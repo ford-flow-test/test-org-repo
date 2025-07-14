@@ -52,7 +52,7 @@ jobs:
                 let email = null;
                 try {
                   const { data: user } = await github.rest.users.getByUsername({ username: pr.user.login });
-                  console.log(user);
+                  console.log(data);
                   //email = user.email || 'no-email@example.com'; // Provide a placeholder if no email is available
                 } catch (error) {
                   console.error(`Failed to retrieve email for user ${pr.user.login}:`, error);

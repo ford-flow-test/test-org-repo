@@ -1,4 +1,4 @@
-name: Rebase Pull Requests
+name: Rebase Pull Request
 
 on:
   push:
@@ -11,25 +11,24 @@ permissions:
 jobs:
   check-and-rebase:
     runs-on: ubuntu-latest
-    steps:          
+    steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # We need full commit history for rebase
-          
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install Dependencies
-        run: npm install nodemailer
-        
+        run: npm install -g nodemailer
+
       - name: Set Git user details
         run: |
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git config --local user.name 'github-actions[bot]'
-
       # Output:
       #  BRANCH: A branch to rebase
       #  PR_LIST: A JSON list of all checked PRs. Example:
@@ -88,7 +87,7 @@ jobs:
                   await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);
                   await exec.exec(`git rebase ${potentialPR.base.ref}`);
-                  await exec.exec(`git checkout main`);
+                  await exec.exec(`git checkout canary`);
                   pr = potentialPR;
                   if (email != null) {
                     success_email = email;
@@ -104,8 +103,7 @@ jobs:
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
                   await exec.exec(`git rebase --abort`);
-                  await exec.exec(`git checkout main`);
-
+                  await exec.exec(`git checkout canary`);
                   prList.push({
                     pr: potentialPR.number,
                     status: status,
@@ -114,7 +112,7 @@ jobs:
                   });
                 }
               }
-
+              
               if (prs.data.length < perPage) {
                 break;
               }
@@ -130,23 +128,21 @@ jobs:
               core.setOutput('BRANCH', '');
               core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             }
-      
+          
       - name: Rebase
         if: ${{ steps.get-rebase-branch.outputs.BRANCH != '' }}
         run: |
           branch=${{ steps.get-rebase-branch.outputs.BRANCH }}
           git checkout $branch
           git push origin $branch --force-with-lease
-
       - name: Post Comments
+        if: ${{ steps.get-rebase-branch.outputs.BRANCH != '' }}
         uses: actions/github-script@v7
-        env:
-          PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         with:
           script: |
             const prList = JSON.parse(process.env.PR_LIST).pr;
             console.log(prList);
-
+            
             async function deletePreviousComment(prNumber) {
               const comments = await github.rest.issues.listComments({
                 owner: context.repo.owner,
@@ -162,7 +158,6 @@ jobs:
                 });
               }
             }
-            
             for (const { pr, status, author } of prList) {
               await deletePreviousComment(pr);
               const body = status
@@ -177,18 +172,19 @@ jobs:
             }
             
       - name: Send Emails
+        if: ${{ steps.get-rebase-branch.outputs.BRANCH != '' }}
         uses: actions/github-script@v7
         env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
           PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         with:
           script: |
             const nodemailer = require('nodemailer');
             const prList = JSON.parse(process.env.PR_LIST).pr;
             console.log(prList);
-
             const transporter = nodemailer.createTransport({
               host: process.env.SMTP_HOST,
               port: 2525,
@@ -207,18 +203,16 @@ jobs:
               const body = `Your PR #${pr} ${status ? 'has rebased successfully' : 'failed to rebase'}.`;
   
               const mailOptions = {
-                from: '"Rebase bot" <patsakorn_b+smtp@flowaccount.com>',
+                from: `"Rebase bot" <${process.env.SMTP_EMAIL}>`,
                 to: email,
                 subject: subject,
                 text: body,
               };
   
               try {
-                // await transporter.sendMail(mailOptions);
+                await transporter.sendMail(mailOptions);
                 console.log(`Email sent to ${email} for PR #${pr}`);
               } catch (error) {
                 console.error(`Failed to send email to ${email}: `, error.message);
               }
             };
-
-

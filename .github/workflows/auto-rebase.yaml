@@ -87,7 +87,7 @@ jobs:
                   await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout ${potentialPR.head.ref}`);
                   await exec.exec(`git rebase ${potentialPR.base.ref}`);
-                  await exec.exec(`git checkout canary`);
+                  await exec.exec(`git checkout main`);
                   pr = potentialPR;
                   if (email != null) {
                     success_email = email;
@@ -103,7 +103,7 @@ jobs:
                 } catch (error) {
                   console.log(`PR #${potentialPR.number} cannot be rebased: ${error.message}`);
                   await exec.exec(`git rebase --abort`);
-                  await exec.exec(`git checkout canary`);
+                  await exec.exec(`git checkout main`);
                   prList.push({
                     pr: potentialPR.number,
                     status: status,

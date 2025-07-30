@@ -118,15 +118,18 @@ jobs:
               }
               page += 1;
             }
-            if (prs) {
-              console.log(prs);
+            if (pr) {
+              console.log(pr);
+              console.log("havePR");
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
-              core.setOutput('PR_LIST', JSON.stringify({ prs: prList }));
+              core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             } else {
+              console.log("noPR");
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')
               core.setOutput('BRANCH', '');
+              core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             }
           
       - name: Rebase
@@ -141,7 +144,7 @@ jobs:
         with:
           script: |
             console.log(process.env.PR_LIST);
-            const prList = JSON.parse(process.env.PR_LIST).prs;
+            const prList = JSON.parse(process.env.PR_LIST).pr;
             console.log(prList);
             
             async function deletePreviousComment(prNumber) {

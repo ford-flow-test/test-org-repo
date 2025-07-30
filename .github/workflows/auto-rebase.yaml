@@ -119,7 +119,7 @@ jobs:
               page += 1;
             }
             if (pr) {
-              console.log(pr);
+              console.log(prList);
               console.log("havePR");
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);

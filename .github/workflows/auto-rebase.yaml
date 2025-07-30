@@ -119,6 +119,7 @@ jobs:
               page += 1;
             }
             if (pr) {
+              console.log(pr);
               core.notice('PR to rebase: ' + pr.html_url);
               core.setOutput('BRANCH', pr.head.ref);
               core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
@@ -126,7 +127,6 @@ jobs:
               console.log('No PR to rebase');
               core.notice('No PR to rebase.')
               core.setOutput('BRANCH', '');
-              core.setOutput('PR_LIST', JSON.stringify({ pr: prList }));
             }
           
       - name: Rebase

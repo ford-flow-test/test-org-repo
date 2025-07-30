@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        run: npm install -g nodemailer
+        run: npm install --legacy-peer-deps nodemailer
 
       - name: Set Git user details
         run: |

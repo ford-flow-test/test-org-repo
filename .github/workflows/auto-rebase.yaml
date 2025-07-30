@@ -140,6 +140,8 @@ jobs:
           git push origin $branch --force-with-lease
       - name: Post Comments
         if: ${{ steps.get-rebase-branch.outputs.BRANCH != '' }}
+        env:
+          PR_LIST: ${{ steps.get-rebase-branch.outputs.PR_LIST }}
         uses: actions/github-script@v7
         with:
           script: |

@@ -85,7 +85,7 @@ jobs:
                   console.log(`Checking ${potentialPR.url}`);
                   await exec.exec(`git fetch origin ${potentialPR.head.ref}`);
                   await exec.exec(`git fetch origin ${potentialPR.base.ref}`);
-                  await exec.exec(`git checkout ${potentialPR.head.ref}`);
+                  await exec.exec(`git checkout -B ${potentialPR.head.ref} origin/${potentialPR.head.ref}`);
                   await exec.exec(`git rebase ${potentialPR.base.ref}`);
                   await exec.exec(`git checkout main`);
                   pr = potentialPR;

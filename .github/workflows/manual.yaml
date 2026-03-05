@@ -1,0 +1,11 @@
+name: Manual Workflow Dispatch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  say-hello:
+    runs-on: self-hosted
+    steps:
+      - name: Print Hello
+        run: echo "Hello, world!

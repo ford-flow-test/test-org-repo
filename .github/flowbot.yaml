@@ -1,0 +1,8 @@
+modules:
+  merge-queue:
+    enabled: true
+    merge_method: squash
+    ci_workflows:
+      - pr-validation.yaml
+    ci_timeout_minutes: 60
+    max_retries: 3

@@ -4,6 +4,7 @@ name: Validate code in the PR
 
 on:
   pull_request:
+  workflow_dispatch:
 
 
 jobs:

@@ -1,6 +1,6 @@
 ﻿namespace AlwaysFailNUnitTest;
 
-public class Tests
+public class Tests3
 {
     [SetUp]
     public void Setup()
@@ -10,6 +10,6 @@ public class Tests
     [Test]
     public void Test1()
     {
-        Assert.Fail();
+        Assert.Pass();
     }
 }

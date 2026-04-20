@@ -1,0 +1,24 @@
+name: Validate code in the merge queue
+
+on:
+  [merge_group, pull_request]
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Display info
+        run: |
+          pwd
+          tree -a -I '.git'
+          git status
+      - name: Test the application
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            9.0.x
+      - run: |
+          dotnet test test-app
+          

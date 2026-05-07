@@ -22,4 +22,4 @@ jobs:
       - name: Test the application
         run: |
           dotnet --version
-          sleep 300
+          sleep 30

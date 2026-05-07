@@ -6,3 +6,4 @@ modules:
       - pr-validation.yaml
     ci_timeout_minutes: 60
     max_retries: 3
+    queue_url: "http://localhost:3001/d/flowbot-merge-queue/flowbot-e28094-merge-queue?var-org={owner}&var-repo={repo}"

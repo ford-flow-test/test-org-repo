@@ -12,10 +12,12 @@ modules:
       max-interruption-retries: 0
     batching:
       enabled: true
-      max-size: 4
+      max-size: 10
       # 30s so a hand-labelled set of PRs lands in one batch. In production
       # 0 is the latency setting: the first PR off an idle queue dispatches
       # at once and later arrivals gather behind the in-flight batch.
       collect-window-seconds: 30
-      # The whole point of this run: one cycle, exact attribution.
       speculation: true
+      # Bounded: 2 runs regardless of batch size, spread evenly. The lowest
+      # red prefix narrows the culprit to a window and the bisect finishes it.
+      speculation-width: 2

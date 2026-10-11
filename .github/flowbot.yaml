@@ -13,8 +13,9 @@ modules:
     batching:
       enabled: true
       max-size: 4
-      # Dispatch as soon as the queue goes non-empty; PRs labelled behind an
-      # in-flight batch still gather for the next one.
-      collect-window-seconds: 0
+      # 30s so a hand-labelled set of PRs lands in one batch. In production
+      # 0 is the latency setting: the first PR off an idle queue dispatches
+      # at once and later arrivals gather behind the in-flight batch.
+      collect-window-seconds: 30
       # The whole point of this run: one cycle, exact attribution.
       speculation: true

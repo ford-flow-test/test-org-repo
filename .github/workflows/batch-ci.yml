@@ -1,0 +1,55 @@
+name: Batch CI
+
+# Dispatched by flowbot's merge queue. Declares the batch inputs so a run's
+# logs say exactly which PRs it covered — triggerWorkflows filters inputs to
+# whatever a workflow declares, so undeclared ones are silently dropped.
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: First PR in the dispatch
+        type: string
+      pr_branch:
+        description: Ref CI runs against (a flowbot/batch-* ref when batching)
+        type: string
+      pr_sha:
+        description: Tip of that ref
+        type: string
+      pr_author:
+        description: First PR's author
+        type: string
+      pr_numbers:
+        description: Every PR in the dispatch, comma-separated
+        type: string
+      batch_id:
+        description: Flowbot batch id
+        type: string
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.pr_sha || github.sha }}
+
+      - name: What am I testing
+        run: |
+          echo "ref        : ${{ inputs.pr_branch }}"
+          echo "sha        : ${{ inputs.pr_sha }}"
+          echo "batch_id   : ${{ inputs.batch_id }}"
+          echo "pr_number  : ${{ inputs.pr_number }}"
+          echo "pr_numbers : ${{ inputs.pr_numbers }}"
+          echo "--- tree ---"
+          ls -1
+
+      # Content-driven verdict: a PR that adds BREAK_ME is the culprit. Any
+      # batch or prefix whose tree contains it goes red, which is exactly the
+      # signal the queue has to attribute.
+      - name: Fail if the tree contains BREAK_ME
+        run: |
+          if ls BREAK_ME* >/dev/null 2>&1; then
+            echo "::error::tree contains $(ls BREAK_ME*) — failing deliberately"
+            exit 1
+          fi
+          echo "no BREAK_ME marker; green"

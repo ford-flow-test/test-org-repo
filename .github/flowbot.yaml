@@ -1,9 +1,20 @@
+# Test configuration for flowbot merge-queue batching.
 modules:
   merge-queue:
     enabled: true
-    merge_method: squash
-    ci_workflows:
-      - pr-validation.yaml
-    ci_timeout_minutes: 60
-    max_retries: 3
-    queue_url: "http://localhost:3001/d/flowbot-merge-queue/flowbot-e28094-merge-queue?var-org={owner}&var-repo={repo}"
+    merge-method: squash
+    ci:
+      workflows:
+        - batch-ci.yml
+      timeout-minutes: 15
+      # No spot runners here, and a retry would only muddy the attribution
+      # signal we're trying to observe.
+      max-interruption-retries: 0
+    batching:
+      enabled: true
+      max-size: 4
+      # Dispatch as soon as the queue goes non-empty; PRs labelled behind an
+      # in-flight batch still gather for the next one.
+      collect-window-seconds: 0
+      # The whole point of this run: one cycle, exact attribution.
+      speculation: true

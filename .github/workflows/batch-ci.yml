@@ -46,13 +46,6 @@ jobs:
       # Content-driven verdict: a PR that adds BREAK_ME is the culprit. Any
       # batch or prefix whose tree contains it goes red, which is exactly the
       # signal the queue has to attribute.
-      # Long enough that a run is still executing when the queue processes a
-      # lower group's red. Without it the job outlives its usefulness by only
-      # a second or two and there is nothing left to cancel, which makes the
-      # cancel-stranded-runs path impossible to observe end to end.
-      - name: Hold the runner so the cancel window is observable
-        run: sleep 150
-
       - name: Fail if the tree contains BREAK_ME
         run: |
           if ls BREAK_ME* >/dev/null 2>&1; then

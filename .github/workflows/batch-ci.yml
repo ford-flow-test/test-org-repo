@@ -46,6 +46,12 @@ jobs:
       # Content-driven verdict: a PR that adds BREAK_ME is the culprit. Any
       # batch or prefix whose tree contains it goes red, which is exactly the
       # signal the queue has to attribute.
+      # Keeps the chain in flight long enough to kill the bot underneath it,
+      # which is what a deploy does: replicas 1 / maxSurge 0 means every
+      # rollout restarts flowbot, in-flight batch or not.
+      - name: Hold so the restart lands mid-chain
+        run: sleep 120
+
       - name: Fail if the tree contains BREAK_ME
         run: |
           if ls BREAK_ME* >/dev/null 2>&1; then

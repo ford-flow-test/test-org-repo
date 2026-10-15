@@ -46,6 +46,13 @@ jobs:
       # Content-driven verdict: a PR that adds BREAK_ME is the culprit. Any
       # batch or prefix whose tree contains it goes red, which is exactly the
       # signal the queue has to attribute.
+      # A chain group only counts as "stranded" while it is still executing
+      # when a lower group's red is processed. Real CI takes ~26 minutes, which
+      # makes that window minutes wide; here it would be a second or two, so
+      # the path is unreachable without a hold.
+      - name: Hold so the stranded window is reachable
+        run: sleep 70
+
       - name: Fail if the tree contains BREAK_ME
         run: |
           if ls BREAK_ME* >/dev/null 2>&1; then

@@ -17,7 +17,8 @@ modules:
       # 0 is the latency setting: the first PR off an idle queue dispatches
       # at once and later arrivals gather behind the in-flight batch.
       collect-window-seconds: 30
-      speculation: true
-      # Bounded: 2 runs regardless of batch size, spread evenly. The lowest
-      # red prefix narrows the culprit to a window and the bisect finishes it.
-      speculation-width: 2
+      # How many of the chain's CI runs may be in flight at once. The chain
+      # is always complete -- one run per PR, each a verdict on exactly that
+      # PR -- so this bounds runner pressure, not attribution. 2 keeps the
+      # throttle observable in a hand-driven scenario.
+      build-concurrency: 2
